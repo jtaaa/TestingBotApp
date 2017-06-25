@@ -51,10 +51,10 @@ namespace TestingBotApp
                 using (var scope = DialogModule.BeginLifetimeScope(Conversation.Container, message))
                 {
                     var client = scope.Resolve<IConnectorClient>();
-                    if (update.MembersAdded.Any())
+                    var newMembers = message.MembersAdded?.Where(t => t.Id != message.Recipient.Id);
+                    foreach (var newMember in newMembers)
                     {
-                        var reply = message.CreateReply();
-                        reply.Text = $"Welcome {message.From.Name}";
+                        var reply = message.CreateReply("Welcome! Say length to get a sentences length");
                         await client.Conversations.ReplyToActivityAsync(reply);
                     }
                 }
