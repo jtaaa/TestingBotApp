@@ -15,7 +15,6 @@ namespace TestingBotApp
     [BotAuthentication]
     public class MessagesController : ApiController
     {
-        bool WelcomeMessageSent = false;
         /// <summary>
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
