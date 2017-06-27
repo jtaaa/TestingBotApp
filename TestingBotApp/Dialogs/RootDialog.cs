@@ -18,8 +18,7 @@ namespace TestingBotApp.Dialogs
         [LuisIntent("None")]
         public async Task None(IDialogContext context, LuisResult result)
         {
-            string message = $"Sorry I did not understand: " + string.Join(", ", result.Intents.Select(i => i.Intent));
-            await context.PostAsync(message);
+            await context.PostAsync("I'm sorry. I didn't understand you.");
             context.Wait(MessageReceived);
         }
 
@@ -34,6 +33,13 @@ namespace TestingBotApp.Dialogs
             }
 
             await context.PostAsync(reply);
+            context.Wait(MessageReceived);
+        }
+
+        [LuisIntent("Greetings")]
+        public async Task Greetings(IDialogContext context, LuisResult result)
+        {
+            await context.PostAsync("Hello there!");
             context.Wait(MessageReceived);
         }
     }
