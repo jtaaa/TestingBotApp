@@ -52,7 +52,7 @@ namespace TestingBotApp
                     var newMembers = message.MembersAdded?.Where(t => t.Id != message.Recipient.Id);
                     foreach (var newMember in newMembers)
                     {
-                        var reply = message.CreateReply("Welcome! Say length to get a sentences length");
+                        var reply = message.CreateReply("Welcome! Ask me about people's aliases");
                         await client.Conversations.ReplyToActivityAsync(reply);
                     }
                 }
