@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
+using System.Collections.Generic;
 
 namespace TestingBotApp.Dialogs
 {
@@ -14,6 +15,12 @@ namespace TestingBotApp.Dialogs
     [Serializable]
     public class RootDialog : LuisDialog<object>
     {
+        private readonly Dictionary<string, string> Aliases = new Dictionary<string, string>()
+        {
+            { "JOSHUA", "Canadan" },
+            { "SEENATH", "Hydrodan" },
+            { "IRWIN", "Irmyster" }
+        };
 
         [LuisIntent("None")]
         public async Task None(IDialogContext context, LuisResult result)
@@ -21,18 +28,39 @@ namespace TestingBotApp.Dialogs
             await context.PostAsync("I'm sorry. I didn't understand you.");
             context.Wait(MessageReceived);
         }
+        private static string ToUpperFirstLetter(string source)
+        {
+            if (string.IsNullOrEmpty(source))
+                return string.Empty;
+            // convert to char array of the string
+            char[] letters = source.ToCharArray();
+            // upper case the first char
+            letters[0] = char.ToUpper(letters[0]);
+            // return the array made of the new char array
+            return new string(letters);
+        }
 
         [LuisIntent("GetAlias")]
         public async Task GetAlias(IDialogContext context, LuisResult result)
         {
-            EntityRecommendation title;
-            string reply = "";
-            if (result.TryFindEntity("Name", out title))
+            EntityRecommendation name;
+            if (result.TryFindEntity("Name", out name))
             {
-                reply = title.Entity;
+                string alias = String.Empty;
+                if (Aliases.ContainsKey(name.Entity.ToUpper()))
+                {
+                    alias = Aliases[name.Entity.ToUpper()];
+                    await context.PostAsync($"{ToUpperFirstLetter(name.Entity)}'s alias is {alias}");
+                }
+                else
+                {
+                    await context.PostAsync($"Sorry I don't know an alias for {ToUpperFirstLetter(name.Entity)}");
+                }
             }
-
-            await context.PostAsync(reply);
+            else
+            {
+                await context.PostAsync("Sorry I didn't catch the person's name");
+            }
             context.Wait(MessageReceived);
         }
 
